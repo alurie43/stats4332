@@ -6,6 +6,8 @@
 #'     Wilk output
 #' @examples normality_check(mtcars$wt)
 #' @importFrom car qqPlot
+#' @importFrom grDevices rainbow
+#' @import graphics
 #' @export
 normality_check <- function(x) {
   if (is.numeric(x) == FALSE) stop("This function works on numeric vectors only.")

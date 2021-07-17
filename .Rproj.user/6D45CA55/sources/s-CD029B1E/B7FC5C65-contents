@@ -1,0 +1,16 @@
+Package: stats4332
+Type: Package
+Title: Statistics 4332 Functions
+Version: 0.1.0
+Author: Anna Lurie
+Maintainer: The package maintainer <alurie43@gmail.com>
+Description: Some helper functions in Statistics
+   introduction, such as computing power, 
+   sample size, degrees of freedom, conducting
+   basics stats analysis.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
+Imports: 
+    car

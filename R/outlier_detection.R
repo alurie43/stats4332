@@ -5,6 +5,7 @@
 #'    and upper fences to detect outliers.
 #'    Prints outliers, if there are any.
 #' @param x A numeric vector
+#' @import stats
 #' @return 5-number summary, iqr, lower fence and upper fence
 #' @examples outlierdetection(mtcars$wt)
 #' @export
