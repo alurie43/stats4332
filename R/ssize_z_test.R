@@ -3,20 +3,18 @@
 #' @param m0 The value of the population mean from the null hypothesis
 #' @param m1 An alternative value of the population mean
 #' @param sd Population standard deviation
-#' @param n Sample size
+#' @param power Power of the test
 #' @param sig.level Significance level, default is 0.05
 #' @param alternative type of alternative, with values
-#' "two.sided","less" or "greater", default is "two.sided"
-#' @return Power of the test
+#' "two.sided","less" or "greater"
+#' @return Sample size required to achieve the given power
 #' @examples
-#' pwr.z.test(m0 = 3, m1 = 2.5, sd = 1, n = 15,
+#' ssize.z.test(m0 = 3.25, m1 = 3.5, sd = 1, power = 0.9,
 #' sig.level = 0.01, alternative = "two.sided")
-#' pwr.z.test(m0 = 3, m1 = 3.5, sd = 1, n = 20,
-#' sig.level = 0.10, alternative = "greater")
+#' ssize.z.test(m0 = 3.25, m1 = 3, sd = 1, power = 0.92,
+#' sig.level = 0.10, alternative = "less")
 #' @export
-pwr.z.test <- function(m0, m1, sd, n,
-                       sig.level = 0.05,
-                       alternative = "two.sided") {
+ssize.z.test <- function(m0, m1, sd, power = 0.9, sig.level = 0.05, alternative = "two.sided") {
   if (is.numeric(m0) == FALSE) stop("The mean m0 from the null should be a number.")
   if (is.numeric(m1) == FALSE) stop("The mean m1, the alternative value of the mean, should be a number.")
   if (is.numeric(sd) == FALSE) {
@@ -24,8 +22,10 @@ pwr.z.test <- function(m0, m1, sd, n,
   } else if (sd <= 0) {
     stop("Standard deviation should be a positive number.")
   }
-  if (round(n) != n) {
-    stop("Sample size should be a positive integer.")
+  if (is.numeric(power) == FALSE) {
+    stop("Power should be a number between 0 and 1.")
+  } else if (power <= 0 | power >= 1) {
+    stop("Power should be a number between 0 and 1.")
   }
   if (is.numeric(sig.level) == FALSE) {
     stop("Significance level should be a decimal between 0 and 1")
@@ -37,15 +37,25 @@ pwr.z.test <- function(m0, m1, sd, n,
     stop("Alternative can only be \"two.sided\", \"less\"
          or \"greater\".")
   }
-  a <- ifelse(alternative == "two.sided", sig.level/2, sig.level);
+  if (alternative == "two.sided") {
+    tside = 2;
+  } else {
+    tside = 1;
+  }
 
-  #finding z-alpha or z-alpha/2
-  z_crit <- qnorm(1 - a);
-  z1 <- z_crit + (m0 - m1)/(sd/sqrt(n))
-  z2 <- -z_crit + (m0 - m1)/(sd/sqrt(n))
-  p1 <- pnorm(z1)
-  p2 <- pnorm(z2)
-  beta <- ifelse(alternative == "two.sided", p1-p2,
-                 ifelse(alternative == "less", 1-p2, p1))
-  1 - beta
+  if (tside == 2) {
+    a <- sig.level/2;
+    b <- 1 - power;
+    za <- qnorm(a, mean = 0, sd = 1, lower.tail = FALSE);
+    zb <- qnorm(b, mean = 0, sd = 1, lower.tail = FALSE);
+    n1 <- ceiling((sd *(za + zb)/(m0 - m1))^2);
+  }
+  if (tside != 2) {
+    a <- sig.level;
+    b <- 1 - power;
+    za <- qnorm(a, mean = 0, sd = 1, lower.tail = FALSE);
+    zb <- qnorm(b, mean = 0, sd = 1, lower.tail = FALSE);
+    n1 <- ceiling((sd *(za + zb)/(m0 - m1))^2);
+  }
+  return(n1);
 }
