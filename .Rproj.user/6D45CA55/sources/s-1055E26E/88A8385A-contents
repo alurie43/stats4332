@@ -1,0 +1,3 @@
+library(devtools)
+install_github("alurie43/stats4332")
+library(stats4332)
